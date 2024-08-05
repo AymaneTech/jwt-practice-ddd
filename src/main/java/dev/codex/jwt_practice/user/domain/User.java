@@ -1,4 +1,4 @@
-package dev.codex.jwt_practice.user;
+package dev.codex.jwt_practice.user.domain;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
