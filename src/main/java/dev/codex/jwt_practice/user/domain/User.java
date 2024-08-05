@@ -9,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Table;
 
+import dev.codex.jwt_practice.common.models.AbstractEntity;
 import dev.codex.jwt_practice.user.domain.valueObjects.Email;
 import dev.codex.jwt_practice.user.domain.valueObjects.FullName;
 import dev.codex.jwt_practice.user.domain.valueObjects.UserId;
@@ -23,7 +24,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class User {
+public class User extends AbstractEntity<UserId> {
 
     @EmbeddedId
     @GeneratedValue
@@ -42,4 +43,5 @@ public class User {
     private Email email;
 
     private String password;
+
 }
