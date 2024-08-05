@@ -11,9 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import dev.codex.jwt_practice.authentication.services.JWTService;
 import io.jsonwebtoken.io.IOException;
@@ -22,11 +20,9 @@ import lombok.RequiredArgsConstructor;
 /**
  * JWTAuthenticationFilter
  */
-@Component
 @RequiredArgsConstructor
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
-    private final HandlerExceptionResolver exceptionResolver;
     private final UserDetailsService userDetailsService;
     private final JWTService jwtService;
 
@@ -64,7 +60,19 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         } catch (Exception e) {
-            exceptionResolver.resolveException(request, response, null, e);
+            handleException(response, e);
+        }
+    }
+
+    private void handleException(HttpServletResponse response, Exception e) throws IOException {
+        try {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            String jsonError = "{\"error\": \"" + e.getMessage() + "\"}";
+            response.getWriter().write(jsonError);
+
+        } catch (java.io.IOException ex) {
+            ex.printStackTrace();
         }
     }
 }

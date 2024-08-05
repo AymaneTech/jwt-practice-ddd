@@ -3,18 +3,15 @@ package dev.codex.jwt_practice.authentication.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import dev.codex.jwt_practice.authentication.services.JWTService;
 import dev.codex.jwt_practice.user.application.UserService;
 import lombok.RequiredArgsConstructor;
 
@@ -22,44 +19,32 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final JWTAuthenticationFilter jWTAuthenticationFilter;
+
+    // this two beans are required for JWTAuthenticationFilter
+    private final JWTService jwtService;
+    private final UserService userService;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        final JWTAuthenticationFilter jwtAuthFilter = new JWTAuthenticationFilter(userDetailsService(), jwtService);
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(
                         authorize -> {
-                            authorize.requestMatchers("/hello").permitAll();
-                            authorize.requestMatchers("hello2").authenticated();
+                            authorize.anyRequest().permitAll();
                         })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jWTAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
     @Bean
-    public UserDetailsService userDetailsService(UserService service) {
-        return username -> service.findByEmail(username);
+    public UserDetailsService userDetailsService() {
+        return username -> userService.findByEmail(username);
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception{
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
-    }
-
-    @Bean
-    AuthenticationProvider authenticationProvider(UserService userService) {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-
-        authProvider.setUserDetailsService(userDetailsService(userService));
-        authProvider.setPasswordEncoder(passwordEncoder());
-
-        return authProvider;
     }
 }

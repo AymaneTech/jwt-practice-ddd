@@ -10,4 +10,12 @@ import jakarta.validation.constraints.NotNull;
  */
 @Embeddable
 public record RoleId(@NotNull UUID value) {
+
+    public RoleId(UUID value) {
+        this.value = value;
+    }
+
+    public RoleId() {
+        this(UUID.randomUUID());
+    }
 }

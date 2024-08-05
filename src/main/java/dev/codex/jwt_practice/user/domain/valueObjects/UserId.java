@@ -1,7 +1,6 @@
 package dev.codex.jwt_practice.user.domain.valueObjects;
 
-import java.util.UUID;
-
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
 
@@ -9,5 +8,6 @@ import jakarta.validation.constraints.NotNull;
  * UserId
  */
 @Embeddable
-public record UserId(@NotNull UUID value) {
+public record UserId(@NotNull @Column(name = "id") Integer value) {
+
 }
