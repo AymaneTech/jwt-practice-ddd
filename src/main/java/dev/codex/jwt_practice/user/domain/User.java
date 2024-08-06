@@ -2,16 +2,14 @@ package dev.codex.jwt_practice.user.domain;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 
-import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -19,10 +17,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import dev.codex.jwt_practice.common.models.AbstractEntity;
-import dev.codex.jwt_practice.user.domain.valueObjects.Email;
-import dev.codex.jwt_practice.user.domain.valueObjects.FullName;
-import dev.codex.jwt_practice.user.domain.valueObjects.RoleId;
-import dev.codex.jwt_practice.user.domain.valueObjects.UserId;
+import dev.codex.jwt_practice.user.domain.entities.Role;
 import lombok.Getter;
 
 /**
@@ -32,41 +27,35 @@ import lombok.Getter;
 @Table(name = "users")
 
 @Getter
-public class User extends AbstractEntity<UserId> implements UserDetails {
+public class User extends AbstractEntity<Integer> implements UserDetails {
 
-    @EmbeddedId
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private UserId id;
+    @Id
+    @GeneratedValue
+    private Integer id;
 
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "firstName", column = @Column(name = "first_name")),
-            @AttributeOverride(name = "lastName", column = @Column(name = "last_name"))
-    })
-    private FullName fullName;
+    @Column(name = "full_name")
+    private String fullName;
 
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "email"))
-    private Email email;
+    @Column(name = "email", unique = true)
+    private String email;
 
     private String password;
 
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "role_id"))
-    private RoleId roleId;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = Role.class)
+    private Role role;
 
-    public User setId() {
-        this.id = new UserId(29292);
+    public User setId(Integer id) {
+        this.id = id;
         return this;
     }
 
-    public User setFullName(String firstName, String lastName) {
-        this.fullName = new FullName(firstName, lastName);
+    public User setFullName(String fullName) {
+        this.fullName = fullName;
         return this;
     }
 
     public User setEmail(String email) {
-        this.email = new Email(email);
+        this.email = email;
         return this;
     }
 
@@ -75,19 +64,19 @@ public class User extends AbstractEntity<UserId> implements UserDetails {
         return this;
     }
 
-    public User setRoleId(UUID roleId) {
-        this.roleId = new RoleId(roleId);
+    public User setRole(Role role) {
+        this.role = role;
         return this;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(roleId.value().toString());
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.getName());
         return List.of(authority);
     }
 
     @Override
     public String getUsername() {
-        return email.value();
+        return email;
     }
 }
