@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import dev.codex.jwt_practice.authentication.dtos.requests.LoginRequest;
-import dev.codex.jwt_practice.authentication.dtos.requests.RegisterRequest;
-import dev.codex.jwt_practice.authentication.dtos.responses.AuthenticationResponse;
-import dev.codex.jwt_practice.authentication.services.AuthenticationService;
+import dev.codex.jwt_practice.authentication.application.dtos.requests.LoginRequest;
+import dev.codex.jwt_practice.authentication.application.dtos.requests.RegisterRequest;
+import dev.codex.jwt_practice.authentication.application.dtos.responses.AuthenticationResponse;
+import dev.codex.jwt_practice.authentication.application.services.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 
 /**

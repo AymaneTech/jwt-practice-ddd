@@ -1,14 +1,14 @@
 [
   {
-    "id": "83406fbe-acd1-4062-8de3-d5d3ccbf5442",
+    "id": "1",
     "name": "super_admin"
   },
   {
-    "id": "edc39f9c-a1cf-4bff-af5a-fb13bf9438c3",
+    "id": "2",
     "name": "admin"
   },
   {
-    "id": "2385587e-756e-4ce3-9876-8ecdcbb97b89",
+    "id": "3",
     "name": "organiser"
   }
 ]

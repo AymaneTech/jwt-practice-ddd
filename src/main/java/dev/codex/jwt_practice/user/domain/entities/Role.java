@@ -1,15 +1,14 @@
 package dev.codex.jwt_practice.user.domain.entities;
 
-import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
+import dev.codex.jwt_practice.user.domain.valueObjects.RoleId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-import dev.codex.jwt_practice.user.domain.valueObjects.RoleId;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.scheduling.support.SimpleTriggerContext;
 
 /**
  * Role
@@ -21,13 +20,16 @@ import lombok.Setter;
 @Setter
 public class Role {
 
-    @EmbeddedId
+    @Id
     @GeneratedValue
-    @AttributeOverride(name = "value", column = @Column(name = "id"))
     private RoleId id;
 
     private String name;
 
-    Role() {
+    Role() {}
+
+    public Role(String name) {
+        this.id = new RoleId();
+        this.name = name;
     }
 }

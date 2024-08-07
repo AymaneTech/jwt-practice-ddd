@@ -11,7 +11,6 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -19,7 +18,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import dev.codex.jwt_practice.common.models.AbstractEntity;
-import dev.codex.jwt_practice.user.domain.valueObjects.Email;
 import dev.codex.jwt_practice.user.domain.valueObjects.FullName;
 import dev.codex.jwt_practice.user.domain.valueObjects.RoleId;
 import dev.codex.jwt_practice.user.domain.valueObjects.UserId;
@@ -35,7 +33,8 @@ import lombok.Getter;
 public class User extends AbstractEntity<UserId> implements UserDetails {
 
     @EmbeddedId
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue
+    @AttributeOverride(name = "value", column = @Column(name = "id"))
     private UserId id;
 
     @Embedded
@@ -45,28 +44,36 @@ public class User extends AbstractEntity<UserId> implements UserDetails {
     })
     private FullName fullName;
 
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "email"))
-    private Email email;
+    @Column(name = "email", unique = true)
+    private String email;
 
     private String password;
 
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "role_id"))
     private RoleId roleId;
 
-    public User setId() {
-        this.id = new UserId(29292);
+    User() {
+    }
+
+    public User(FullName fullName, String email, String password, UUID roleId) {
+        this.id = new UserId();
+        this.fullName = fullName;
+        this.email = email;
+        this.password = password;
+        this.roleId = new RoleId(roleId);
+    }
+
+    public User setId(UUID id) {
+        this.id = new UserId(id);
         return this;
     }
 
-    public User setFullName(String firstName, String lastName) {
-        this.fullName = new FullName(firstName, lastName);
+    public User setFullName(FullName fullName) {
+        this.fullName = fullName;
         return this;
     }
 
     public User setEmail(String email) {
-        this.email = new Email(email);
+        this.email = email;
         return this;
     }
 
@@ -75,19 +82,19 @@ public class User extends AbstractEntity<UserId> implements UserDetails {
         return this;
     }
 
-    public User setRoleId(UUID roleId) {
-        this.roleId = new RoleId(roleId);
+    public User setRole(RoleId roleId) {
+        this.roleId = roleId;
         return this;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(roleId.value().toString());
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(getRoleId().toString());
         return List.of(authority);
     }
 
     @Override
     public String getUsername() {
-        return email.value();
+        return email;
     }
 }

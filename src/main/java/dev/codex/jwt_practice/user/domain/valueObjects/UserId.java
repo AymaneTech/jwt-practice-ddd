@@ -1,13 +1,21 @@
 package dev.codex.jwt_practice.user.domain.valueObjects;
 
-import jakarta.persistence.Column;
+import java.util.UUID;
+
 import jakarta.persistence.Embeddable;
-import jakarta.validation.constraints.NotNull;
 
 /**
  * UserId
  */
 @Embeddable
-public record UserId(@NotNull @Column(name = "id") Integer value) {
+public record UserId(UUID value) {
+    public UserId {
+        if (value == null) {
+            throw new IllegalArgumentException("RoleId cannot be null");
+        }
+    }
 
+    public UserId() {
+        this(UUID.randomUUID());
+    }
 }

@@ -1,1 +1,0 @@
-# jwt-practice-ddd

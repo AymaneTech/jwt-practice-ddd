@@ -7,7 +7,5 @@ import jakarta.validation.constraints.NotBlank;
  * FullName
  */
 @Embeddable
-public record FullName(
-        @NotBlank String firstName,
-        @NotBlank String lastName) {
+public record FullName(@NotBlank String firstName, @NotBlank String lastName) {
 }
