@@ -5,9 +5,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import dev.codex.jwt_practice.Authentication.Application.DTOs.Requests.RegisterRequest;
-import dev.codex.jwt_practice.User.Application.UserService;
-import dev.codex.jwt_practice.User.Domain.User;
+import dev.codex.jwt_practice.authentication.application.dtos.requests.RegisterRequest;
+import dev.codex.jwt_practice.user.application.services.UserService;
+import dev.codex.jwt_practice.user.domain.User;
 import lombok.RequiredArgsConstructor;
 
 /**
